@@ -287,7 +287,7 @@ export function App() {
               <div className="flex items-center gap-2">
                 <h1 className="font-extrabold text-lg text-slate-900 tracking-tight">ComuniApp</h1>
                 <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">
-                  POO TypeScript
+                  Pagina en desarrollo
                 </span>
               </div>
               <p className="text-xs text-slate-500 hidden sm:block">
@@ -444,7 +444,7 @@ export function App() {
                 <div className="flex items-center gap-3 text-xs text-slate-500 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
                   <Clock className="w-4 h-4 text-emerald-600" />
                   <span>
-                    Tiempo de respuesta (CA-03.1):{' '}
+                    Tiempo de respuesta (Backend en Cloudflare)(CA-03.1):{' '}
                     <strong className="text-emerald-700">{responseTimeMs} ms</strong> (&lt; 3s Cumple)
                   </span>
                 </div>
