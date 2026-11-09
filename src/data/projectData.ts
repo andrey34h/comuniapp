@@ -1,31 +1,50 @@
-﻿import { ServiceOffer, UserStory, EvaluationCriterion } from '../types';
+﻿import { ServiceOffer, UserAccount, UserStory } from '../types';
+
+export const INITIAL_USERS: UserAccount[] = [
+  {
+    id: 'usr-101',
+    name: 'Andrés Felipe Acuña',
+    email: 'andres@comuniapp.co',
+    password: 'Admin123*',
+    role: 'Emprendedor',
+    neighborhood: 'Fontibón Centro',
+  },
+  {
+    id: 'usr-102',
+    name: 'Laura Gómez',
+    email: 'residente@comuniapp.co',
+    password: 'Vecino123*',
+    role: 'Residente',
+    neighborhood: 'Modelia',
+  },
+];
 
 export const INITIAL_SERVICES: ServiceOffer[] = [
   {
     id: 'srv-101',
-    title: 'Mantenimiento de PC, Redes y Linux',
+    title: 'Mantenimiento de PC, Redes y Servidores Linux',
     providerName: 'Andrés Acuña - Soluciones TI',
     category: 'Tecnología y Soporte',
-    description: 'Diagnóstico de hardware, optimización de sistemas, configuración de redes domésticas y soporte técnico garantizado.',
+    description: 'Diagnóstico de hardware, optimización de sistemas, configuración de redes locales y soporte garantizado a domicilio.',
     priceCOP: 60000,
     phone: '573001234567',
     neighborhood: 'Fontibón Centro',
     rating: 4.9,
     verified: true,
-    createdAt: '2026-11-01'
+    createdAt: '2026-11-01',
   },
   {
     id: 'srv-102',
     title: 'Instalaciones Eléctricas y Revisión Residencial',
     providerName: 'Ing. Carlos Mendoza',
     category: 'Hogar y Reparaciones',
-    description: 'Mantenimiento preventivo de tableros eléctricos, cambio de luminarias LED y diagnóstico de cortocircuitos bajo norma.',
+    description: 'Mantenimiento preventivo de tableros eléctricos, cambio de luminarias LED y diagnóstico de cortocircuitos bajo norma RETIE.',
     priceCOP: 75000,
     phone: '573109876543',
     neighborhood: 'Modelia',
     rating: 4.8,
     verified: true,
-    createdAt: '2026-11-02'
+    createdAt: '2026-11-02',
   },
   {
     id: 'srv-103',
@@ -38,20 +57,20 @@ export const INITIAL_SERVICES: ServiceOffer[] = [
     neighborhood: 'Hayuelos',
     rating: 4.7,
     verified: true,
-    createdAt: '2026-11-04'
+    createdAt: '2026-11-04',
   },
   {
     id: 'srv-104',
     title: 'Tutorías de Programación, Cálculo y Física',
     providerName: 'Daniel Sierra - Mentor Académico',
     category: 'Educación y Tutorías',
-    description: 'Clases personalizadas presenciales o virtuales en lógica de programación, estructuras de datos y matemáticas universitarias.',
+    description: 'Clases personalizadas presenciales o virtuales en programación orientada a objetos, estructuras de datos y cálculo.',
     priceCOP: 40000,
     phone: '573204445566',
     neighborhood: 'Villemar',
     rating: 5.0,
     verified: true,
-    createdAt: '2026-11-05'
+    createdAt: '2026-11-05',
   },
   {
     id: 'srv-105',
@@ -64,120 +83,185 @@ export const INITIAL_SERVICES: ServiceOffer[] = [
     neighborhood: 'Salitre Occidental',
     rating: 4.8,
     verified: false,
-    createdAt: '2026-11-06'
-  }
+    createdAt: '2026-11-06',
+  },
 ];
 
 export const USER_STORIES: UserStory[] = [
   {
-    id: 'hu-1',
+    id: 'hu-01',
     code: 'HU-01',
-    title: 'Autenticación y Selección de Rol Comunitario',
-    role: 'Usuario de la comunidad (Residente o Emprendedor)',
-    want: 'iniciar sesión y alternar mi perfil entre Residente y Emprendedor',
-    soThat: 'pueda contratar servicios locales o publicar mis propias ofertas según mi necesidad',
+    moduleName: 'Módulo de Seguridad y Registro',
+    title: 'Registro de Nuevos Usuarios en la Comunidad',
+    actor: 'Vecino o emprendedor no registrado en ComuniApp',
+    want: 'crear una cuenta indicando mi nombre, correo electrónico, contraseña, barrio y rol (Residente o Emprendedor)',
+    soThat: 'pueda quedar registrado en el sistema e ingresar a las funcionalidades de la plataforma',
     priority: 'Alta (MVP)',
-    acceptanceCriteria: [
-      'DADO un usuario en la plataforma, CUANDO selecciona su rol (Residente/Emprendedor), ENTONCES la interfaz adapta los permisos de publicación inmediatamente.',
-      'DADO el formulario de perfil, CUANDO ingresa su nombre y barrio, ENTONCES la sesión persiste en el navegador.'
+    criteria: [
+      {
+        code: 'CA-01.1',
+        title: 'Registro exitoso de nuevo usuario',
+        gherkin: 'DADO que el usuario abre el formulario de Registro, CUANDO ingresa nombre, correo único, contraseña (>= 6 caracteres), barrio y rol, ENTONCES el sistema crea la cuenta, inicia sesión automáticamente y la persiste en el almacenamiento.',
+        expectedResult: 'Cuenta creada, notificación de bienvenida y acceso inmediato al catálogo.',
+        status: 'Cumple',
+        observation: 'Validado creando cuentas de rol Residente y Emprendedor con persistencia en LocalStorage.',
+      },
+      {
+        code: 'CA-01.2',
+        title: 'Rechazo por correo electrónico duplicado',
+        gherkin: 'DADO que ya existe una cuenta con el correo "andres@comuniapp.co", CUANDO un usuario intenta registrarse con el mismo correo, ENTONCES el sistema impide el registro y muestra una alerta de error.',
+        expectedResult: 'Mensaje de error: "Ya existe una cuenta registrada con este correo electrónico."',
+        status: 'Cumple',
+        observation: 'El sistema verifica unicidad de correo antes de instanciar la clase UsuarioComunitario.',
+      },
+      {
+        code: 'CA-01.3',
+        title: 'Validación de campos obligatorios vacíos en registro',
+        gherkin: 'DADO el formulario de registro, CUANDO el usuario deja algún campo obligatorio en blanco e intenta registrarse, ENTONCES el sistema bloquea el envío y señala que debe completar todos los datos.',
+        expectedResult: 'Alerta visual indicando qué campos son obligatorios.',
+        status: 'Cumple',
+        observation: 'Validación activa tanto en el manejador de estado como en atributos del formulario.',
+      },
     ],
-    status: 'Validado'
   },
   {
-    id: 'hu-2',
+    id: 'hu-02',
     code: 'HU-02',
-    title: 'Búsqueda Interactiva y Filtrado por Categorías',
-    role: 'Residente del sector',
-    want: 'filtrar los servicios por palabra clave y categoría con respuesta menor a 3 segundos',
-    soThat: 'encuentre rápidamente un proveedor confiable cerca de mi ubicación',
+    moduleName: 'Módulo de Seguridad y Autenticación',
+    title: 'Inicio de Sesión con Credenciales de Acceso',
+    actor: 'Usuario registrado (Residente o Emprendedor)',
+    want: 'iniciar sesión con mi correo electrónico y contraseña',
+    soThat: 'pueda acceder de forma segura a las funciones de publicación o contratación según mi rol',
     priority: 'Alta (MVP)',
-    acceptanceCriteria: [
-      'DADO el catálogo de servicios, CUANDO el usuario escribe en el buscador o elige una categoría, ENTONCES el listado se actualiza en < 100 ms (cumpliendo RNF < 3s).',
-      'DADO un filtro sin coincidencias, CUANDO no existen servicios, ENTONCES se muestra un estado vacío claro con opción de restablecer filtros.'
+    criteria: [
+      {
+        code: 'CA-02.1',
+        title: 'Acceso exitoso al menú principal con credenciales válidas',
+        gherkin: 'DADO que el usuario de prueba existe y tiene credenciales válidas, CUANDO ingresa su correo y contraseña correctos, ENTONCES la aplicación permite acceder al directorio principal y habilita los permisos de su rol.',
+        expectedResult: 'Ingreso al panel principal mostrando nombre, barrio y rol activo en la barra superior.',
+        status: 'Cumple',
+        observation: 'Probado con las cuentas semilla de Emprendedor y Residente.',
+      },
+      {
+        code: 'CA-02.2',
+        title: 'Rechazo por credenciales incorrectas',
+        gherkin: 'DADO que para la prueba se ingresan credenciales incorrectas (clave errónea o correo inexistente), CUANDO intenta iniciar sesión, ENTONCES el sistema rechaza el acceso y genera un mensaje de error claro.',
+        expectedResult: 'Recuadro rojo de error: "Credenciales inválidas: verifica tu correo o contraseña."',
+        status: 'Cumple',
+        observation: 'Validado mediante el método POO validarCredenciales() de la clase UsuarioComunitario.',
+      },
+      {
+        code: 'CA-02.3',
+        title: 'Validación de campos vacíos en inicio de sesión',
+        gherkin: 'DADO que el usuario deja vacíos el correo o la contraseña, CUANDO presiona "Ingresar", ENTONCES el sistema impide el acceso e indica que debe completar los campos obligatorios.',
+        expectedResult: 'Mensaje de validación: "Por favor completa todos los campos obligatorios (correo y contraseña)."',
+        status: 'Cumple',
+        observation: 'Se corrigió y validó para impedir envíos en blanco.',
+      },
+      {
+        code: 'CA-02.4',
+        title: 'Recuperación de contraseña mediante enlace por correo SMTP',
+        gherkin: 'DADO que el usuario olvidó su clave, CUANDO solicita recuperar contraseña, ENTONCES el sistema envía un token al correo electrónico real.',
+        expectedResult: 'Envío de correo transaccional con enlace de restablecimiento.',
+        status: 'No cumple',
+        observation: 'Queda en el Backlog para la entrega final: el prototipo actual opera sin servidor de correo SMTP externo.',
+      },
     ],
-    status: 'Validado'
   },
   {
-    id: 'hu-3',
+    id: 'hu-03',
     code: 'HU-03',
-    title: 'Publicación de Ofertas de Servicio',
-    role: 'Emprendedor local',
-    want: 'registrar un nuevo servicio indicando título, categoría, tarifa base, barrio y contacto',
-    soThat: 'los vecinos del sector conozcan mi trabajo y puedan contratarme',
+    moduleName: 'Módulo de Catálogo y Búsqueda',
+    title: 'Búsqueda Interactiva y Filtrado por Categorías',
+    actor: 'Residente del sector',
+    want: 'filtrar los servicios por palabra clave y categoría con un tiempo de respuesta inferior a 3 segundos',
+    soThat: 'encuentre rápidamente un proveedor confiable en mi barrio',
     priority: 'Alta (MVP)',
-    acceptanceCriteria: [
-      'DADO un usuario con rol Emprendedor, CUANDO completa el formulario con datos válidos, ENTONCES el servicio se añade en tiempo real al catálogo y se guarda en almacenamiento local.',
-      'DADO un intento de envío con campos vacíos o precio inválido, CUANDO se presiona publicar, ENTONCES el sistema valida y bloquea el registro.'
+    criteria: [
+      {
+        code: 'CA-03.1',
+        title: 'Filtrado reactivo por categoría y término de búsqueda (< 3s)',
+        gherkin: 'DADO el catálogo de servicios, CUANDO el usuario escribe una palabra clave o selecciona una categoría, ENTONCES el listado se actualiza en menos de 3 segundos mostrando la latencia medida.',
+        expectedResult: 'Tarjetas filtradas en ~1.0 ms (cumpliendo holgadamente el RNF < 3000 ms).',
+        status: 'Cumple',
+        observation: 'Telemetría integrada en pantalla con performance.now().',
+      },
+      {
+        code: 'CA-03.2',
+        title: 'Manejo de estado vacío sin coincidencias',
+        gherkin: 'DADO un término de búsqueda que no coincide con ninguna oferta, CUANDO se ejecuta el filtro, ENTONCES se muestra un mensaje informativo y un botón para restablecer los filtros.',
+        expectedResult: 'Vista de estado vacío con botón "Restablecer todos los filtros" funcional.',
+        status: 'Cumple',
+        observation: 'Validado buscando términos inexistentes y restableciendo en un clic.',
+      },
     ],
-    status: 'Validado'
   },
   {
-    id: 'hu-4',
+    id: 'hu-04',
     code: 'HU-04',
-    title: 'Contacto Directo con el Proveedor',
-    role: 'Residente interesado en una oferta',
-    want: 'visualizar los detalles completos del servicio e iniciar contacto directo externo',
-    soThat: 'pueda acordar el servicio sin intermediarios ni comisiones (alcance MVP sin pasarela de pagos)',
+    moduleName: 'Módulo de Gestión de Ofertas',
+    title: 'Publicación de Nuevas Ofertas de Servicio',
+    actor: 'Usuario con rol Emprendedor',
+    want: 'registrar un nuevo servicio indicando título, categoría, tarifa en COP, barrio, teléfono y descripción',
+    soThat: 'los residentes de la comunidad puedan conocer mi emprendimiento y contactarme',
     priority: 'Alta (MVP)',
-    acceptanceCriteria: [
-      'DADO un servicio seleccionado, CUANDO el usuario hace clic en Contactar, ENTONCES se despliega la ficha técnica con enlace directo a WhatsApp/Teléfono con mensaje preconfigurado.'
+    criteria: [
+      {
+        code: 'CA-04.1',
+        title: 'Publicación exitosa de oferta con rol Emprendedor',
+        gherkin: 'DADO un usuario autenticado como Emprendedor, CUANDO completa todos los campos válidos del modal de publicación, ENTONCES el nuevo servicio se agrega al inicio del catálogo y persiste al recargar.',
+        expectedResult: 'Servicio renderizado en la grilla principal y notificación de éxito.',
+        status: 'Cumple',
+        observation: 'Solo los usuarios con rol Emprendedor visualizan el botón de publicación.',
+      },
+      {
+        code: 'CA-04.2',
+        title: 'Validación de tarifa base mínima y campos obligatorios',
+        gherkin: 'DADO el formulario de publicación, CUANDO se intenta ingresar una tarifa menor a $5.000 COP o campos vacíos, ENTONCES el sistema impide el registro y muestra el mensaje de error.',
+        expectedResult: 'Bloqueo del envío hasta ingresar datos completos y tarifa válida.',
+        status: 'Cumple',
+        observation: 'Validado en el controlador de eventos del formulario.',
+      },
     ],
-    status: 'Validado'
   },
   {
-    id: 'hu-5',
+    id: 'hu-05',
     code: 'HU-05',
-    title: 'Gestión de Servicios Favoritos',
-    role: 'Residente recurrente',
-    want: 'guardar y administrar mis proveedores favoritos en una lista personalizada',
-    soThat: 'tenga acceso rápido a ellos en futuras emergencias o contrataciones',
-    priority: 'Media',
-    acceptanceCriteria: [
-      'DADO cualquier tarjeta de servicio, CUANDO el usuario pulsa el icono de favorito, ENTONCES el estado cambia visualmente, actualiza el contador superior y persiste al recargar.'
+    moduleName: 'Módulo de Conexión Comunitaria',
+    title: 'Contacto Directo con el Proveedor del Servicio',
+    actor: 'Residente interesado en contratar un servicio',
+    want: 'abrir la ficha técnica del proveedor e iniciar conversación directa vía WhatsApp/Teléfono',
+    soThat: 'pueda acordar el servicio directamente sin intermediarios ni cobros de comisión',
+    priority: 'Alta (MVP)',
+    criteria: [
+      {
+        code: 'CA-05.1',
+        title: 'Despliegue de modal con ficha de contacto y enlace externo',
+        gherkin: 'DADO un servicio en el catálogo, CUANDO el usuario pulsa el botón "Contactar", ENTONCES se abre una ventana modal con los datos verificados y el botón de mensaje preconfigurado a WhatsApp.',
+        expectedResult: 'Modal informativo y redirección a wa.me con mensaje automático.',
+        status: 'Cumple',
+        observation: 'Cumple con el alcance del MVP (conexión directa sin pasarela de pagos).',
+      },
     ],
-    status: 'Validado'
-  }
-];
-
-export const EVALUATION_CRITERIA: EvaluationCriterion[] = [
-  {
-    id: 'ev-1',
-    phase: 'Recolección',
-    metric: 'Cobertura de Requisitos Funcionales del MVP',
-    target: '100% de las 5 Historias de Usuario priorizadas',
-    result: '5 / 5 Historias de Usuario implementadas y trazables',
-    passed: true
   },
   {
-    id: 'ev-2',
-    phase: 'Diseño Rápido',
-    metric: 'Consistencia con UI Kit (Actividad 2) y Tipado Estricto',
-    target: '0 errores de compilación en TypeScript (strict: true)',
-    result: 'Interfaces tipadas al 100% y componentes reutilizables',
-    passed: true
+    id: 'hu-06',
+    code: 'HU-06',
+    moduleName: 'Módulo de Personalización',
+    title: 'Gestión de Lista de Proveedores Favoritos',
+    actor: 'Usuario autenticado en ComuniApp',
+    want: 'marcar o desmarcar servicios como favoritos y filtrar únicamente mi selección',
+    soThat: 'tenga acceso rápido a los emprendedores de mi confianza en futuras ocasiones',
+    priority: 'Media',
+    criteria: [
+      {
+        code: 'CA-06.1',
+        title: 'Marcado, conteo dinámico y filtro de favoritos',
+        gherkin: 'DADO cualquier servicio del catálogo, CUANDO el usuario hace clic en el icono de corazón, ENTONCES se actualiza el contador "Mis Favoritos (N)" y el estado se conserva en el navegador.',
+        expectedResult: 'Icono resaltado en rojo, contador actualizado y filtro exclusivo funcional.',
+        status: 'Cumple',
+        observation: 'Sincronizado en tiempo real con LocalStorage.',
+      },
+    ],
   },
-  {
-    id: 'ev-3',
-    phase: 'Construcción',
-    metric: 'Tiempo de Respuesta en Filtrado y Búsqueda (RNF-01)',
-    target: 'Menor a 3.0 segundos (< 3000 ms)',
-    result: 'Promedio medido en cliente: ~1.2 ms',
-    passed: true
-  },
-  {
-    id: 'ev-4',
-    phase: 'Evaluación',
-    metric: 'Tasa de Éxito en Pruebas de Usabilidad (Casos Maze)',
-    target: 'Mínimo 85% de tareas completadas sin error',
-    result: '96% de éxito en flujo Registro -> Búsqueda -> Contacto',
-    passed: true
-  },
-  {
-    id: 'ev-5',
-    phase: 'Refinamiento',
-    metric: 'Persistencia de Estado y Retroalimentación Visual',
-    target: 'Conservación de servicios y favoritos en LocalStorage',
-    result: 'Sincronización automática + notificaciones de confirmación',
-    passed: true
-  }
 ];
