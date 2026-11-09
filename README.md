@@ -52,7 +52,7 @@ npm install
 
 # 3. Iniciar servidor de desarrollo
 npm run dev
-Compilación y Despliegue en Cloudflare
-Bash
-npm run build
-npx wrangler pages deploy dist --project-name comuniapp-prototipo
+
+# 4. Conpilacion y despligue en cloudflare 
+npm run build 
+npm wrangler pages deploy dist --project-name comuniapp-prototipo
