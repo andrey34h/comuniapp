@@ -51,3 +51,12 @@ export interface UserStory {
   priority: 'Alta (MVP)' | 'Media';
   criteria: AcceptanceCriterionItem[];
 }
+
+export interface EvaluationCriterion {
+  id: string;
+  phase: 'Recolección' | 'Diseño Rápido' | 'Construcción' | 'Evaluación' | 'Refinamiento';
+  metric: string;
+  target: string;
+  result: string;
+  passed: boolean;
+}
