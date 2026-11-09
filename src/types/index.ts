@@ -8,9 +8,11 @@
 
 export type UserRole = 'Residente' | 'Emprendedor';
 
-export interface UserProfile {
+export interface UserAccount {
   id: string;
   name: string;
+  email: string;
+  password: string;
   role: UserRole;
   neighborhood: string;
 }
@@ -29,23 +31,23 @@ export interface ServiceOffer {
   createdAt: string;
 }
 
+export interface AcceptanceCriterionItem {
+  code: string;
+  title: string;
+  gherkin: string;
+  expectedResult: string;
+  status: 'Cumple' | 'No cumple';
+  observation: string;
+}
+
 export interface UserStory {
   id: string;
   code: string;
+  moduleName: string;
   title: string;
-  role: string;
+  actor: string;
   want: string;
   soThat: string;
   priority: 'Alta (MVP)' | 'Media';
-  acceptanceCriteria: string[];
-  status: 'Implementado' | 'Validado';
-}
-
-export interface EvaluationCriterion {
-  id: string;
-  phase: 'Recolección' | 'Diseño Rápido' | 'Construcción' | 'Evaluación' | 'Refinamiento';
-  metric: string;
-  target: string;
-  result: string;
-  passed: boolean;
+  criteria: AcceptanceCriterionItem[];
 }
